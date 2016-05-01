@@ -47,7 +47,7 @@ var mainState = {
 
         //Ball and cannon
         game.physics.startSystem(Phaser.Physics.P2JS);
-        game.physics.p2.restitution = 1.2;
+        game.physics.p2.restitution = .9;
         this.ball = game.add.sprite(200, 245, 'ball');
         this.cannon = game.add.sprite(200, 490, 'cannon');
         this.ball.anchor.setTo(0.4, 0.4);
