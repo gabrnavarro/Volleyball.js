@@ -5,21 +5,7 @@ var score = 0
 var highscore = 0
 var mainState = {
 
-	resizePolygon: function(originalPhysicsKey, newPhysicsKey, shapeKey, scale){
-	var newData = [];
-	var data = this.game.cache.getPhysicsData(originalPhysicsKey, shapeKey);
-	for (var i = 0; i < data.length; i++) {
-		var vertices = [];
-		for (var j = 0; j < data[i].shape.length; j += 2) {
-			vertices[j] = data[i].shape[j] * scale;
-			vertices[j+1] = data[i].shape[j+1] * scale; 
-		}
-		newData.push({shape : vertices});
-	}
-	var item = {};
-	item[shapeKey] = newData;
-	game.load.physics(newPhysicsKey, '', item);
-	},
+
 
     preload: function() { 
         // This function will be executed at the beginning     
@@ -30,7 +16,6 @@ var mainState = {
         game.load.image('bullet', 'assets/PNG/Balls/Yellow/ballYellow_10.png');
         game.load.image('cloud', 'assets/PNG/Enemies/cloud.png');
         game.load.image('grass', 'assets/PNG/Environment/ground_grass.png');
-        game.load.physics('ball_phys', 'assets/PNG/Balls/Black/ball_phys.json');
 
         
     },
@@ -62,19 +47,19 @@ var mainState = {
 
         //Ball and cannon
         game.physics.startSystem(Phaser.Physics.P2JS);
-        game.physics.p2.restitution = .7;
+        game.physics.p2.restitution = 1.2;
         this.ball = game.add.sprite(200, 245, 'ball');
         this.cannon = game.add.sprite(200, 490, 'cannon');
         this.ball.anchor.setTo(0.4, 0.4);
         this.cannon.anchor.setTo(0.5, 0.5);
         this.cannon.scale.setTo(.4,.4);
-       // this.ball.scale.setTo(.4,.4);
+        this.ball.scale.setTo(.4,.4);
         game.physics.p2.enable(this.ball);
+        this.ball.body.setCircle(29);
+        this.game.debug.body(this.ball)
         //gravity and bounce, collision
-        this.game.physics.p2.gravity.y = 2000; 
-        this.ball.body.clearShapes();
-        //this.resizePolygon('ball_phys', 'ball_phys1', 0, .4);
-        this.ball.body.loadPolygon('ball_phys', 'ballBlack_04');
+        this.game.physics.p2.gravity.y = 1500; 
+
         this.ballCollisionGroup = this.game.physics.p2.createCollisionGroup();
         this.bulletCollisionGroup = this.game.physics.p2.createCollisionGroup();
         this.game.physics.p2.updateBoundsCollisionGroup();
@@ -87,7 +72,7 @@ var mainState = {
         
         this.bullet.callAll('events.onOutOfBounds.add', 'events.onOutOfBounds', this.resetbullet);
         this.bullet.callAll('anchor.setTo', 'anchor', 0.1, 0.1);
-        //this.bullet.callAll('scale.setTo', 'scale', .1, .1);
+        this.bullet.callAll('scale.setTo', 'scale', .1, .1);
         this.bullet.setAll('checkWorldBounds', true);
         this.bullet.enableBody = true;
         this.bullet.physicsBodyType = Phaser.Physics.P2JS;
@@ -95,11 +80,9 @@ var mainState = {
        
 
         this.bullet.forEach(function(child){
-        child.body.clearShapes();
-        //this.resizePolygon('ball_phys', 'ball_phys2', 0, .1);
-        child.body.loadPolygon('ball_phys', 'ballYellow_10');
+        child.body.setCircle(7);
         child.body.setCollisionGroup(this.bulletCollisionGroup);
-        child.body.collides([this.ballCollisionGroup], addscore, this);
+        child.body.collides([this.ballCollisionGroup], this.addscore());
         child.body.collideWorldBounds=false;
     }, this);
     },
@@ -124,12 +107,12 @@ var mainState = {
                 }
         }
         if(this.cursors.left.isDown) {
-            this.cannon.x+=2;
+            this.cannon.x-=4;
         
         }
         
         else if(this.cursors.right.isDown) {
-            this.cannon.x-=2;
+            this.cannon.x+=4;
         }
         
         
@@ -169,6 +152,7 @@ var mainState = {
     },
     
     addscore: function(body1, body2){
+    	console.log(score)
         score = score + 1
         },
     
@@ -178,7 +162,8 @@ var mainState = {
 		// If we have a laser, set it to the starting position
 		bullets.reset(this.cannon.x, this.cannon.y - 20);
 		// Give it a velocity of -500 so it starts shooting
-		bullets.body.velocity.y = -500
+		bullets.body.velocity.x = this.game.rnd.between(-.10, .10)
+		bullets.body.velocity.y = -1000
 	}
     
     },
