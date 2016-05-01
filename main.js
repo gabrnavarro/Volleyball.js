@@ -64,7 +64,7 @@ var mainState = {
         this.bulletCollisionGroup = this.game.physics.p2.createCollisionGroup();
         this.game.physics.p2.updateBoundsCollisionGroup();
         this.ball.body.setCollisionGroup(this.ballCollisionGroup);
-        this.ball.body.collides([this.bulletCollisionGroup]);
+        this.ball.body.collides([this.bulletCollisionGroup], this.addscore(), this);
         
         this.bullet = game.add.group();
         
@@ -82,7 +82,7 @@ var mainState = {
         this.bullet.forEach(function(child){
         child.body.setCircle(7);
         child.body.setCollisionGroup(this.bulletCollisionGroup);
-        child.body.collides([this.ballCollisionGroup], this.addscore());
+        child.body.collides([this.ballCollisionGroup]);
         child.body.collideWorldBounds=false;
     }, this);
     },
@@ -100,7 +100,6 @@ var mainState = {
 		// Save a reference to the current key
             var key = phaserKeys[index];
             if(key.isDown)
-            console.log(key, key.isDown)
 		// If the key was just pressed, fire a laser
             if (key.justDown) {
                 this.firebullet();
