@@ -47,7 +47,7 @@ var mainState = {
 
         //Ball and cannon
         game.physics.startSystem(Phaser.Physics.P2JS);
-        game.physics.p2.restitution = .9;
+        game.physics.p2.restitution = .5;
         this.ball = game.add.sprite(200, 245, 'ball');
         this.cannon = game.add.sprite(200, 490, 'cannon');
         this.ball.anchor.setTo(0.4, 0.4);
@@ -58,13 +58,13 @@ var mainState = {
         this.ball.body.setCircle(29);
         this.game.debug.body(this.ball)
         //gravity and bounce, collision
-        this.game.physics.p2.gravity.y = 1500; 
+        this.game.physics.p2.gravity.y = 1200; 
 
         this.ballCollisionGroup = this.game.physics.p2.createCollisionGroup();
         this.bulletCollisionGroup = this.game.physics.p2.createCollisionGroup();
         this.game.physics.p2.updateBoundsCollisionGroup();
         this.ball.body.setCollisionGroup(this.ballCollisionGroup);
-        this.ball.body.collides([this.bulletCollisionGroup], this.addscore(), this);
+        this.ball.body.collides([this.bulletCollisionGroup], this.addscore);
         
         this.bullet = game.add.group();
         
@@ -106,19 +106,19 @@ var mainState = {
                 }
         }
         if(this.cursors.left.isDown) {
-            this.cannon.x-=4;
+            this.cannon.x-=5;
         
         }
         
         else if(this.cursors.right.isDown) {
-            this.cannon.x+=4;
+            this.cannon.x+=5;
         }
         
         
         
         
        if (this.ball.y > 440) {
-           this.ball.reset(200, 245);
+           this.ball.reset(200, 150);
            if (score > highscore){
               highscore = score;
                 }
@@ -162,7 +162,7 @@ var mainState = {
 		bullets.reset(this.cannon.x, this.cannon.y - 20);
 		// Give it a velocity of -500 so it starts shooting
 		bullets.body.velocity.x = this.game.rnd.between(-.10, .10)
-		bullets.body.velocity.y = -1000
+		bullets.body.velocity.y = -1200
 	}
     
     },
