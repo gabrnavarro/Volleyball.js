@@ -162,7 +162,7 @@ var mainState = {
 		bullets.reset(this.cannon.x, this.cannon.y - 20);
 		// Give it a velocity of -500 so it starts shooting
 		bullets.body.velocity.x = this.game.rnd.between(-.10, .10)
-		bullets.body.velocity.y = -1200
+		bullets.body.velocity.y = -1000
 	}
     
     },
