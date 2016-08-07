@@ -1,12 +1,18 @@
 // Create our 'main' state that will contain the game
 
 var mouseTouchDown = false;
-var score = 0
-var highscore = 0
+var score = 0;
+var highscore = 0;
+
+
 var mainState = {
 
+	addscore: function (body1, body2){
+    	console.log("ew");
+        score = score + 1;
+        },
 
-
+	
     preload: function() { 
         // This function will be executed at the beginning     
         // That's where we load the images and sounds 
@@ -47,7 +53,8 @@ var mainState = {
 
         //Ball and cannon
         game.physics.startSystem(Phaser.Physics.P2JS);
-        game.physics.p2.restitution = 1.2;
+        game.physics.p2.setImpactEvents(true);
+        game.physics.p2.restitution = .3;
         this.ball = game.add.sprite(200, 245, 'ball');
         this.cannon = game.add.sprite(200, 490, 'cannon');
         this.ball.anchor.setTo(0.4, 0.4);
@@ -58,13 +65,12 @@ var mainState = {
         this.ball.body.setCircle(29);
         this.game.debug.body(this.ball)
         //gravity and bounce, collision
-        this.game.physics.p2.gravity.y = 1500; 
+        this.game.physics.p2.gravity.y = 1200; 
 
         this.ballCollisionGroup = this.game.physics.p2.createCollisionGroup();
         this.bulletCollisionGroup = this.game.physics.p2.createCollisionGroup();
         this.game.physics.p2.updateBoundsCollisionGroup();
-        this.ball.body.setCollisionGroup(this.ballCollisionGroup);
-        this.ball.body.collides([this.bulletCollisionGroup]);
+        
         
         this.bullet = game.add.group();
         
@@ -82,9 +88,12 @@ var mainState = {
         this.bullet.forEach(function(child){
         child.body.setCircle(7);
         child.body.setCollisionGroup(this.bulletCollisionGroup);
-        child.body.collides([this.ballCollisionGroup], this.addscore());
+        child.body.collides([this.ballCollisionGroup], this.addscore, this);
         child.body.collideWorldBounds=false;
     }, this);
+
+        this.ball.body.setCollisionGroup(this.ballCollisionGroup);
+        this.ball.body.collides([this.bulletCollisionGroup], this.addscore, this);
     },
     
     resetbullet: function(bullet) {
@@ -100,26 +109,25 @@ var mainState = {
 		// Save a reference to the current key
             var key = phaserKeys[index];
             if(key.isDown)
-            console.log(key, key.isDown)
 		// If the key was just pressed, fire a laser
             if (key.justDown) {
                 this.firebullet();
                 }
         }
         if(this.cursors.left.isDown) {
-            this.cannon.x-=4;
+            this.cannon.x-=5;
         
         }
         
         else if(this.cursors.right.isDown) {
-            this.cannon.x+=4;
+            this.cannon.x+=5;
         }
         
         
         
         
        if (this.ball.y > 440) {
-           this.ball.reset(200, 245);
+           this.ball.reset(200, 150);
            if (score > highscore){
               highscore = score;
                 }
@@ -151,10 +159,6 @@ var mainState = {
         mouseTouchDown = false;
     },
     
-    addscore: function(body1, body2){
-    	console.log(score)
-        score = score + 1
-        },
     
     firebullet: function(){
 	var bullets = this.bullet.getFirstDead(false);
