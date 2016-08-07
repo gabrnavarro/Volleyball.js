@@ -1,12 +1,18 @@
 // Create our 'main' state that will contain the game
 
 var mouseTouchDown = false;
-var score = 0
-var highscore = 0
+var score = 0;
+var highscore = 0;
+
+
 var mainState = {
 
+	addscore: function (body1, body2){
+    	console.log("ew");
+        score = score + 1;
+        },
 
-
+	
     preload: function() { 
         // This function will be executed at the beginning     
         // That's where we load the images and sounds 
@@ -47,6 +53,7 @@ var mainState = {
 
         //Ball and cannon
         game.physics.startSystem(Phaser.Physics.P2JS);
+        game.physics.p2.setImpactEvents(true);
         game.physics.p2.restitution = .3;
         this.ball = game.add.sprite(200, 245, 'ball');
         this.cannon = game.add.sprite(200, 490, 'cannon');
@@ -63,8 +70,7 @@ var mainState = {
         this.ballCollisionGroup = this.game.physics.p2.createCollisionGroup();
         this.bulletCollisionGroup = this.game.physics.p2.createCollisionGroup();
         this.game.physics.p2.updateBoundsCollisionGroup();
-        this.ball.body.setCollisionGroup(this.ballCollisionGroup);
-        this.ball.body.collides([this.bulletCollisionGroup], this.addscore);
+        
         
         this.bullet = game.add.group();
         
@@ -82,9 +88,12 @@ var mainState = {
         this.bullet.forEach(function(child){
         child.body.setCircle(7);
         child.body.setCollisionGroup(this.bulletCollisionGroup);
-        child.body.collides([this.ballCollisionGroup]);
+        child.body.collides([this.ballCollisionGroup], this.addscore, this);
         child.body.collideWorldBounds=false;
     }, this);
+
+        this.ball.body.setCollisionGroup(this.ballCollisionGroup);
+        this.ball.body.collides([this.bulletCollisionGroup], this.addscore, this);
     },
     
     resetbullet: function(bullet) {
@@ -150,10 +159,6 @@ var mainState = {
         mouseTouchDown = false;
     },
     
-    addscore: function(body1, body2){
-    	console.log(score)
-        score = score + 1
-        },
     
     firebullet: function(){
 	var bullets = this.bullet.getFirstDead(false);
